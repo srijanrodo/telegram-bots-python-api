@@ -6,7 +6,7 @@ from azlyrics import get_lyric as get_lyric_az
 import os
 
 token = <token>
-control_id = 37937434
+control_id = <your_control_account_id>
 
 tel = TelegramEventLoop(token, confile = 'lyricsbot.conf', control_id = control_id)
 cache_folder = './lyrics_cache/'
