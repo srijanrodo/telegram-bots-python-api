@@ -5,7 +5,7 @@ from jetlyrics import get_lyric
 from azlyrics import get_lyric as get_lyric_az
 import os
 
-token = '71807785:AAHBNT_jUH623sYIhBiW6yNWHjfUKfFFf0k'
+token = <token>
 control_id = 37937434
 
 tel = TelegramEventLoop(token, confile = 'lyricsbot.conf', control_id = control_id)
