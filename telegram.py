@@ -9,23 +9,36 @@ class Telegram:
 	def __init__(self, token):
 		self.call_url = base_url + token + '/'
 		self.token = token
-		self.me = self.getMe()
+		self.req_timeout = 2
 		self.text_limit = 4096
 		self.last_error = ''
+		self.me = self.getMe()
 	
 	def __method_create__(self, method_name, files = None, data = None):
 		url = self.call_url + method_name
-		if files is not None:
-			return requests.post(url, files = files, data = data)
-		else :
-			return requests.post(url, data = data)
-	def __method_create_json__(self, method_name, files = None, data = None):
 		try:
-			tmp = self.__method_create__(method_name, files = files, data = data).json()
-		except ValueError:
-			self.last_error = "Error: Most Probably Network Issue"
-			return None
-		return tmp
+			if files is not None:
+				ret = requests.post(url, files = files, data = data, timeout = self.req_timeout)
+			else :
+				ret = requests.post(url, data = data, timeout = self.req_timeout)
+		except requests.exceptions.ConnectionError:
+			self.last_error = 'Error: Network Issue'
+			ret = None
+		except requests.exceptions.Timeout:
+			self.last_error = 'Error: Timeout Occured'
+			ret = None
+		return ret
+	def __method_create_json__(self, method_name, files = None, data = None):
+		tmp = self.__method_create__(method_name, files = files, data = data)
+		if tmp == None:
+			ret = None
+		else:
+			try:
+				ret = tmp.json()
+			except ValueError:
+				self.last_error = "Error: Request Failed (JSON object not returned)"
+				ret = None
+		return ret
 	def getMe(self):
 		tmp = self.__method_create_json__('getMe')
 		
@@ -210,6 +223,8 @@ class Telegram:
 			if len(new) > self.text_limit:
 				break
 		return prev
+	def setDefaultTimeout(self, timeout):
+		self.req_timeout = timeout
 
 class TelegramEventLoop(Telegram):
 	def __init__(self, token, confile = 'telegram.conf'):
@@ -232,12 +247,19 @@ class TelegramEventLoop(Telegram):
 			f.close()
 		except FileNotFoundError:
 			last_update = 0
-		
+		if self.checkNetworkConnection() is False:
+			print('No Connection')
+			self.waitForNetworkConnection()
+			print('Connection Back')
 		while self.exit is False:
 			update  = self.getUpdates(offset = last_update + 1)
 			if update == None:
 				update = []
 				print(self.last_error)
+				if self.checkNetworkConnection() is False:
+					print('No Connection')
+					self.waitForNetworkConnection()
+					print('Connection Back')
 			for x in update:
 				last_update = max(last_update, x.update_id)
 				if x.msg_type == 'text':
@@ -262,3 +284,12 @@ class TelegramEventLoop(Telegram):
 		return
 	def doExit(self, *arg):
 		self.exit = True
+	def checkNetworkConnection(self):
+		try:
+			requests.get('https://www.example.com')
+		except requests.exceptions.ConnectionError:
+			return False
+		return True
+	def waitForNetworkConnection(self):
+		while self.checkNetworkConnection() is False:
+			time.sleep(1)
