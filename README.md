@@ -9,6 +9,9 @@ Each method mentioned in https://core.telegram.org/bots/api is provided with the
 An extra method, sendLargeMessage is provided which sends longer than the limit imposed by the bot api (4096 characters). A longer message is broken into multiple messages by this method.
 Note: This method breaks the message by lines. So a long message with no linebreaks won't work.
 
+The default timeout for request methods is set to 2 seconds. This timeout can be changed with the method:
+setDefaultTimeout(timeout)
+
 Another class provided here is TelegramEventLoop class which provides a getUpdates based loop and calls functions on receival of particular texts. On non-text messages an external handler may be associated.
 
 Handlers are added with the method: 
