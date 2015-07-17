@@ -124,7 +124,7 @@ class Telegram:
 			files = {file_type: input_file.file_o}
 		method_name = 'send' + file_type.title()
 		
-		tmp = self.__method_create_json__(method_name, data = data)
+		tmp = self.__method_create_json__(method_name, data = data, files = files)
 
 		if tmp is None:
 			return None

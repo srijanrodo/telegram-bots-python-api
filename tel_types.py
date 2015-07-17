@@ -1,4 +1,5 @@
 import json
+import requests
 
 msg_types = ['text', 'audio', 'video', 'contact', 'location', 'photo']
 
@@ -63,15 +64,25 @@ class Update(Message):
 		
 
 class InputFile:
-	def __init__(self, file_path, file_name = None,is_it_reload = False):
+	def __init__(self, file_path, file_name = None,is_it_reload = False, is_it_url = False):
+		self.file_id = None
+		self.file_o = None
 		if is_it_reload is True:
 			self.file_id = file_n
-		else :
+		else:
+			if is_it_url is True:
+				if file_name is None:
+					file_name = file_path.split('/')[-1]
+				tmp = requests.get(file_path)
+				if tmp.status_code == 200:
+					f = open(file_name,'wb')
+					f.write(tmp.content)
+					f.close()
+					file_path = file_name
 			try:
 				self.file_o = open(file_path, 'rb')
 			except FileNotFoundError:
 				self.file_o = None
-			self.file_id = None
 		self.file_name = file_name
 
 	def add_file_id(self, file_id):
