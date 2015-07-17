@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+module_path = <path_to_module_folder>
+import sys
+sys.path.append(module_path)
 from telegram import TelegramEventLoop
 from jetlyrics import get_lyric
 from azlyrics import get_lyric as get_lyric_az
@@ -8,7 +10,7 @@ import os
 token = <token>
 control_id = <your_control_account_id>
 
-tel = TelegramEventLoop(token, confile = 'lyricsbot.conf', control_id = control_id)
+tel = TelegramEventLoop(token, confile = 'lyricsbot.conf')
 cache_folder = './lyrics_cache/'
 
 def sendLyrics(cmd, msg):

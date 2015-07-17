@@ -212,12 +212,11 @@ class Telegram:
 		return prev
 
 class TelegramEventLoop(Telegram):
-	def __init__(self, token, confile = 'telegram.conf', control_id = None):
+	def __init__(self, token, confile = 'telegram.conf'):
 		super().__init__(token)
 		self.handlers = {}
 		self.exit = False
 		self.nonText = None
-		self.control_id = control_id
 		self.confile = confile
 	def addHandler(self, start_cmd, *funcs):
 		start_cmd = start_cmd.strip()
