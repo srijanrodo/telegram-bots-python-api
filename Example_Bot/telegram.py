@@ -236,6 +236,9 @@ class TelegramEventLoop(Telegram):
 		
 		while self.exit is False:
 			update  = self.getUpdates(offset = last_update + 1)
+			if update == None:
+				update = []
+				print(self.last_error)
 			for x in update:
 				last_update = max(last_update, x.update_id)
 				if x.msg_type == 'text':
