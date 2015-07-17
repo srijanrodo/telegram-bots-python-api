@@ -236,6 +236,9 @@ class TelegramEventLoop(Telegram):
 		
 		while self.exit is False:
 			update  = self.getUpdates(offset = last_update + 1)
+			if update == None:
+				update = []
+				print(self.last_error)
 			for x in update:
 				last_update = max(last_update, x.update_id)
 				if x.msg_type == 'text':
@@ -258,8 +261,5 @@ class TelegramEventLoop(Telegram):
 		if self.nonText is not None:
 			return self.nonText(x)
 		return
-	def doExit(self, cmd, msg):
-		if self.control_id is None:
-			self.exit = True
-		elif msg.chat_id == self.control_id:
-			self.exit = True
+	def doExit(self, *arg):
+		self.exit = True

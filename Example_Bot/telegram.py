@@ -261,8 +261,5 @@ class TelegramEventLoop(Telegram):
 		if self.nonText is not None:
 			return self.nonText(x)
 		return
-	def doExit(self, cmd, msg):
-		if self.control_id is None:
-			self.exit = True
-		elif msg.chat_id == self.control_id:
-			self.exit = True
+	def doExit(self, *arg):
+		self.exit = True

@@ -46,10 +46,14 @@ def goodbye(cmd, msg):
 	if tel.sendMessage(msg.chat_id, bye) == None:
 			print(tel.last_error)
 
+def doExit(cmd, msg):
+	if msg.chat_id == control_id:
+		tel.doExit()
+
 def main():
 	tel.addHandler('/lyrics', sendLyrics)
 	tel.addHandler('/start', intro)
-	tel.addHandler('/exit', tel.doExit)
+	tel.addHandler('/exit', doExit)
 	tel.addHandler('/stop', goodbye)
 	return tel.mainLoop()
 if __name__ == '__main__':
