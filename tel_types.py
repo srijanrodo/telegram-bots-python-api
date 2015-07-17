@@ -1,6 +1,6 @@
 import json
 
-msg_types = ['text', 'audio', 'video', 'contact', 'location']
+msg_types = ['text', 'audio', 'video', 'contact', 'location', 'photo']
 
 def opt_args(obj, arg, default = None, ret_type = None):
 	if arg in obj:
