@@ -3,15 +3,19 @@ module_path = <path_to_module_folder>
 import sys
 sys.path.append(module_path)
 from telegram import TelegramEventLoop
-from jetlyrics import get_lyric
-from azlyrics import get_lyric as get_lyric_az
+import jetlyrics
+import azlyrics
+import songmeanings
 import os
 
-token = <token>
-control_id = <your_control_account_id>
+site_list = [azlyrics, songmeanings, jetlyrics]
+
+token = <your_access_token>
+control_id = <your_acccount_control_id>
+cache_folder = './lyrics_cache/'
 
 tel = TelegramEventLoop(token, confile = 'lyricsbot.conf')
-cache_folder = './lyrics_cache/'
+
 
 def sendLyrics(cmd, msg):
 	text = msg.text[len(cmd):]
@@ -25,13 +29,15 @@ def sendLyrics(cmd, msg):
 		lyric = f.read()
 		f.close()
 	else :
-		lyric = get_lyric_az(text)
-		if lyric == 'Error':
-			lyric = get_lyric(text)
-		if lyric is not 'Error':
-			f = open(file_path, 'w')
-			f.write(lyric)
-			f.close()
+		for x in site_list:
+			lyric = x.get_lyric(text)
+			if lyric == 'Error':
+				continue
+			else:
+				f = open(file_path, 'w')
+				f.write(lyric)
+				f.close()
+				break
 	print('Sending')
 	if tel.sendLargeMessage(msg.chat_id, lyric) == None:
 		print(tel.last_error)
@@ -51,7 +57,6 @@ def goodbye(cmd, msg):
 def doExit(cmd, msg):
 	if msg.chat_id == control_id:
 		tel.doExit()
-
 def main():
 	tel.addHandler('/lyrics', sendLyrics)
 	tel.addHandler('/start', intro)
