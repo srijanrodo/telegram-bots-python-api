@@ -13,8 +13,9 @@ def opt_args(obj, arg, default = None, ret_type = None):
 class User:
 	def __init__(self, user_dict):
 		self.id = user_dict['id']
-		self.firstname = user_dict['first_name']
-		self.username = user_dict['username']
+		self.first_name = user_dict['first_name']
+		self.last_name = opt_args(user_dict, 'last_name', default = '')
+		self.username = opt_args(user_dict, 'username', default = '')
 
 class GroupChat:
 	def __init__(self, grp):

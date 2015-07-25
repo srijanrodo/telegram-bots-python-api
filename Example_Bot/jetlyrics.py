@@ -3,6 +3,7 @@ import html
 
 src_url = 'http://lyrics.jetmute.com/search.php?q='
 s_url = 'http://lyrics.jetmute.com/viewlyrics.php?id='
+attr = "\nLyrics Provided by lyrics.jetmute.com"
 
 def get_lyric(song, artist = ''):
 	query = song + ' ' + artist
@@ -15,7 +16,9 @@ def get_lyric(song, artist = ''):
 	song_url = s_url + song_id
 	song_page = requests.get(song_url)
 	lyric = parse_lyric(song_page.text)
-	return html.unescape(lyric)
+	if lyric == 'Error':
+		return lyric
+	return html.unescape(lyric) + attr
 
 
 def parse_id(text):

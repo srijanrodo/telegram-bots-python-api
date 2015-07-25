@@ -19,6 +19,8 @@ def get_lyric(song, artist = ''):
 	#print(song_id)
 	song_page = requests.get(song_url)
 	lyric = parse_lyric(song_page.text)
+	if lyric == 'Error':
+		return lyric
 	return html.unescape(lyric) + attr
 
 
