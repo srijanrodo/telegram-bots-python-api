@@ -78,7 +78,7 @@ class Telegram:
 				return None
 			data = args[0]
 		if 'reply_markup' in data:
-			data['reply_markup'] = data[reply_markup].json_str
+			data['reply_markup'] = data['reply_markup'].json_str
 		tmp = self.__method_create_json__('sendMessage', data = data)
 		if tmp is None:
 			return None
@@ -228,17 +228,14 @@ class Telegram:
 class TelegramEventLoop(Telegram):
 	def __init__(self, token, confile = 'telegram.conf'):
 		super().__init__(token)
-		self.handlers = {}
+		self.handlers = []
 		self.exit = False
 		self.nonText = None
 		self.confile = confile
-	def addHandler(self, start_cmd, *funcs):
-		start_cmd = start_cmd.strip()
-		if start_cmd not in self.handlers:
-			self.handlers[start_cmd] = []
-		for x in funcs :
-			self.handlers[start_cmd].append(x)
-		return start_cmd
+	def addHandler(self, check_msg, *funcs):
+		for x in funcs:
+			self.handlers.append((check_msg, x))
+		return check_msg
 	def mainLoop(self):
 		try:
 			f = open(self.confile, 'r')
@@ -262,22 +259,16 @@ class TelegramEventLoop(Telegram):
 			elif update != []:
 				last_update = update[0].update_id
 			for x in update:
-				if x.message == None:
-					continue
-				y = x.message
 				last_update = max(last_update, x.update_id)
-				if y.msg_type == 'text':
-					print(y.text)
-					cmd = y.text.split()[0]
-					if cmd in self.handlers:
-						for func in self.handlers[cmd]:
-							func(cmd, y)
-				else :
-					self.handleNonText(y)
+				for (key,foo) in self.handlers:
+					if key(x) == True:
+						foo(x)
+
 			if update != []:
 				f = open(self.confile, 'w')
 				f.write(str(last_update))
 				f.close()
+
 		print('Exiting')
 		return
 	def setNonTextHandler(self, func):

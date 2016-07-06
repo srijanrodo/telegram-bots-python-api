@@ -88,7 +88,7 @@ class InputFile:
 		self.file_id = None
 		self.file_o = None
 		if is_it_reload is True:
-			self.file_id = file_n
+			self.file_id = file_name
 		else:
 			if is_it_url is True:
 				if file_name is None:
@@ -200,7 +200,7 @@ class ReplyKeyboardMarkup(ReplyMarksUps):
 	def __init__(self, keyboard, resize_keyboard = False, one_time_keyboard = False,\
 	selective = False):
 		super().__init__(selective)
-		self.data['keyboard'] = [x.data for x in keyboard]
+		self.data['keyboard'] = [[y.data for y in x] for x in keyboard]
 		self.data['resize_keyboard'] = resize_keyboard
 		self.data['one_time_keyboard'] = one_time_keyboard
 		self.stringify()
