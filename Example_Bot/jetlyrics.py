@@ -9,12 +9,15 @@ def get_lyric(song, artist = ''):
 	query = song + ' ' + artist
 	query = '+'.join(query.strip().split())
 	query_url = src_url + query
-	search_result = requests.get(query_url)
-	song_id = parse_id(search_result.text)
-	if(song_id == 'error'):
+	try:
+		search_result = requests.get(query_url)
+		song_id = parse_id(search_result.text)
+		if(song_id == 'error'):
+			return 'Error'
+		song_url = s_url + song_id
+		song_page = requests.get(song_url)
+	except requests.exceptions.ConnectionError:
 		return 'Error'
-	song_url = s_url + song_id
-	song_page = requests.get(song_url)
 	lyric = parse_lyric(song_page.text)
 	if lyric == 'Error':
 		return lyric
